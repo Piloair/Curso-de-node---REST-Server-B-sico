@@ -1,12 +1,14 @@
 const express = require('express')
-const cors = require('cors')
+const cors = require('cors');
+const { dbConnection } = require('../database/config');
 
 class Server {
     constructor() {
         this.app = express();
         this.port = process.env.PORT || 8080;//Por si acaso no tiene env
         this.usuariosRoutePath = '/api/usuarios';
-
+        //Conectar a base de datos
+        this.conectarDB();
 
         // Middleware Funciones que añaden funciones al servidor.
         this.middelwares();
@@ -14,7 +16,9 @@ class Server {
         // Rutas de mi aplicacion
         this.routes();
     }
-
+    async conectarDB(){
+        await dbConnection();
+    }
     middelwares() { // Directorio Publico
         //CORS
         this.app.use(cors())
@@ -29,7 +33,7 @@ class Server {
     }
 
     listen() {
-        this.app.listen(process.env.PORT, () => {
+        this.app.listen(process.env.PORT,"0.0.0.0", () => {
             console.log('Servidor corriendo en el puerto', this.port);
         });
     }
